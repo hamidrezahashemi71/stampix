@@ -39,3 +39,13 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## This project (tstamp) — decisions that override the defaults above
+
+- Read `SPEC.md` first: domain model, interaction rules, roadmap (S1 done → S2 next).
+- **No Expo Router.** Three tabs are switched by state in `App.tsx`; keep it that way unless the app outgrows it.
+- Must keep running in **Expo Go** until roadmap S4 (notification action); don't add native modules before then.
+- All visible text is English, lowercase, terminal style. Use `T`, `Btn`, `Chip`, `Input`, `Sheet` from `src/ui.tsx`
+  and colors from `usePalette()` — never hard-code colors in screens.
+- Store timestamps as epoch ms; calendar (gregorian/jalali) is display-only via `src/time.ts`.
+- Before finishing: `npm run typecheck`, `npm run lint`, `npm run test:store`.
