@@ -44,6 +44,7 @@ Docs: https://docs.expo.dev/eas/index.md
 
 - Read `SPEC.md` first: domain model, interaction rules, roadmap (S1 done → S2 next).
 - **No Expo Router.** Three tabs are switched by state in `App.tsx`; keep it that way unless the app outgrows it.
+- Pinned to **Expo SDK 57** (what the Play Store Expo Go supports). Don't upgrade the SDK unless the user's Expo Go supports it.
 - Must keep running in **Expo Go** until roadmap S4 (notification action); don't add native modules before then.
 - All visible text is English, lowercase, terminal style. Use `T`, `Btn`, `Chip`, `Input`, `Sheet` from `src/ui.tsx`
   and colors from `usePalette()` — never hard-code colors in screens.

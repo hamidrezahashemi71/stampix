@@ -19,6 +19,10 @@ npx expo start
 
 Scan the QR code with Expo Go. Code changes reload live on the phone.
 
+> The project targets **Expo SDK 57**. Expo Go runs exactly one SDK; if it says
+> *"Project is incompatible with this version of Expo Go"*, check the SDK shown in Expo Go
+> (settings / home) and align the project: `npm i expo@~<sdk>.0.0 && npx expo install --fix`.
+
 - Different networks / Wi-Fi blocks it → `npx expo start --tunnel`
 - Clear the bundler cache → `npx expo start -c`
 - Quick look in a desktop browser → `npx expo start --web`
@@ -64,4 +68,4 @@ npm run test:store    # store logic tests in Node (AsyncStorage mocked)
 
 ## Stack
 
-Expo SDK 58 · React Native 0.88 · TypeScript · zustand + AsyncStorage · jalaali-js · JetBrains Mono
+Expo SDK 57 · React Native 0.86 · TypeScript · zustand + AsyncStorage · jalaali-js · JetBrains Mono

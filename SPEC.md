@@ -36,7 +36,7 @@ Rules:
 
 ## Architecture
 
-- Expo SDK 58, React Native 0.88, TypeScript, **runs in Expo Go** (no custom native code yet).
+- Expo SDK 57, React Native 0.86, TypeScript, **runs in Expo Go** (no custom native code yet). SDK is pinned to the version the Play Store Expo Go supports — check before upgrading.
 - State: `zustand` + `persist` → `AsyncStorage` (key `tstamp/v1`). Pure helpers in `store.ts`.
 - Navigation: deliberate hand-rolled 3-tab shell in `App.tsx` (tmux-style status bar). No Expo Router —
   three screens don't justify it.
