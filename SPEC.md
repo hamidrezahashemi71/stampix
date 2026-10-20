@@ -19,7 +19,7 @@ Single user, offline, data on device. English-only UI, dark terminal aesthetic.
 | `Category` | Kind of activity. `checkpoints: string[]` is the optional template; empty = free stamps. |
 | `Session` | One run of a category (or uncategorized). Open until closed. Duration = last stamp − first stamp. |
 | `Stamp` | `at` (epoch ms, UTC), `label`, `note`, `tags`. Belongs to one session. |
-| `Settings` | `calendar` (gregorian/jalali), `accent` (green/blue), `autoCloseHours`, `quickTags`. |
+| `Settings` | `calendar` (gregorian/jalali), `accent` (green/blue), `showTimer` (live elapsed counter on/off), `autoCloseHours`, `quickTags`. |
 
 Rules:
 
@@ -33,6 +33,9 @@ Rules:
 - An open session idle longer than `autoCloseHours` is closed at its last stamp (on launch / foreground / next stamp).
 - Only *complete* sessions feed stats: closed, ≥2 stamps, and all checkpoints stamped when the category has a template.
 - Calendars are display-only. Storage is always epoch ms.
+- `showTimer` off hides the big live counter on LOG (shows only the start time) and slows the re-render tick to 30 s.
+- Bottom sheets are Modals: they wrap their content in a nested `SafeAreaProvider` (a Modal is its own Android window)
+  and keep at least 16 dp above the bottom edge, so actions never sit under the system navigation buttons.
 
 ## Architecture
 

@@ -71,6 +71,11 @@ export function ConfigScreen() {
         ))}
       </Line>
 
+      <Line k="live_timer">
+        <Chip label="on" on={settings.showTimer} onPress={() => setSettings({ showTimer: true })} />
+        <Chip label="off" on={!settings.showTimer} onPress={() => setSettings({ showTimer: false })} />
+      </Line>
+
       <H>sessions</H>
       <Line k="auto_close_idle_after">
         {[2, 4, 8, 12].map((h) => (

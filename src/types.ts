@@ -35,6 +35,8 @@ export interface Settings {
   accent: AccentKind;
   /** An open session with no stamp for this many hours is closed automatically. */
   autoCloseHours: number;
+  /** Show the live elapsed-time counter for the active session. */
+  showTimer: boolean;
   /** One-tap tags offered in the stamp editor. */
   quickTags: string[];
 }

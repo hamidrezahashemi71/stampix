@@ -20,7 +20,9 @@ export function LogScreen() {
   const closeActive = useStore((s) => s.closeActive);
   const undoStamp = useStore((s) => s.undoStamp);
 
-  const now = useNow(1000);
+  const showTimer = useStore((s) => s.settings.showTimer);
+  // Tick every second only while the live timer is shown.
+  const now = useNow(showTimer ? 1000 : 30_000);
   const [editId, setEditId] = useState<ID | null>(null);
   const [toast, setToast] = useState<{ id: ID; text: string } | null>(null);
 
@@ -108,12 +110,20 @@ export function LogScreen() {
               </T>
             </View>
 
-            <T accent glow bold size={46} style={{ marginTop: 8 }}>
-              {dur(now - first.at)}
-            </T>
-            <T dim size={12}>
-              started {clock(first.at)} · last {dur(now - last.at)} ago
-            </T>
+            {showTimer ? (
+              <>
+                <T accent glow bold size={46} style={{ marginTop: 8 }}>
+                  {dur(now - first.at)}
+                </T>
+                <T dim size={12}>
+                  started {clock(first.at)} · last {dur(now - last.at)} ago
+                </T>
+              </>
+            ) : (
+              <T dim size={12} style={{ marginTop: 6 }}>
+                started {clock(first.at)}
+              </T>
+            )}
 
             <Hr />
 

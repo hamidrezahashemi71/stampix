@@ -111,6 +111,7 @@ const initialData: Data = {
     calendar: 'gregorian',
     accent: 'green',
     autoCloseHours: 4,
+    showTimer: true,
     quickTags: DEFAULT_QUICK_TAGS,
   },
   activeSessionId: null,

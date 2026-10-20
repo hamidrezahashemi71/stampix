@@ -15,8 +15,11 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets, type EdgeInsets } from 'react-native-safe-area-context';
 import { FONT, usePalette } from './theme';
+
+/** Floor for the bottom gap when the platform reports no inset (e.g. 3-button nav inside a Modal). */
+const MIN_BOTTOM_GAP = 16;
 
 // ───────────────────────── hooks ─────────────────────────
 
@@ -212,9 +215,7 @@ export function Sheet({
   onClose: () => void;
   children: React.ReactNode;
 }) {
-  const P = usePalette();
-  const insets = useSafeAreaInsets();
-  const kb = useKeyboardHeight();
+  const outer = useSafeAreaInsets();
   return (
     <Modal
       visible={visible}
@@ -224,38 +225,65 @@ export function Sheet({
       navigationBarTranslucent
       onRequestClose={onClose}
     >
-      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose}>
-          <View style={{ flex: 1, backgroundColor: '#000000AA' }} />
-        </Pressable>
-        <View
-          style={{
-            maxHeight: '85%',
-            backgroundColor: P.surface,
-            borderTopWidth: 1,
-            borderColor: P.accent,
-            paddingBottom: (kb || insets.bottom) + 12,
-            marginTop: insets.top,
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, paddingBottom: 6 }}>
-            <T size={13} accent bold style={{ flex: 1 }} numberOfLines={1}>
-              ── {title} ──
-            </T>
-            <Pressable onPress={onClose} hitSlop={12}>
-              <T size={13} dim>
-                [esc]
-              </T>
-            </Pressable>
-          </View>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ paddingHorizontal: 14, paddingTop: 6 }}
-          >
-            {children}
-          </ScrollView>
-        </View>
-      </View>
+      {/* On Android a Modal is its own window: measure its insets with a nested provider,
+          so the sheet never slides under the system navigation buttons. */}
+      <SafeAreaProvider>
+        <SheetBody title={title} onClose={onClose} outer={outer}>
+          {children}
+        </SheetBody>
+      </SafeAreaProvider>
     </Modal>
+  );
+}
+
+function SheetBody({
+  title,
+  onClose,
+  outer,
+  children,
+}: {
+  title: string;
+  onClose: () => void;
+  outer: EdgeInsets;
+  children: React.ReactNode;
+}) {
+  const P = usePalette();
+  const inner = useSafeAreaInsets();
+  const kb = useKeyboardHeight();
+  const bottom = Math.max(inner.bottom, outer.bottom, MIN_BOTTOM_GAP);
+  const top = Math.max(inner.top, outer.top);
+  return (
+    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <Pressable style={StyleSheet.absoluteFill} onPress={onClose}>
+        <View style={{ flex: 1, backgroundColor: '#000000AA' }} />
+      </Pressable>
+      <View
+        style={{
+          maxHeight: '85%',
+          backgroundColor: P.surface,
+          borderTopWidth: 1,
+          borderColor: P.accent,
+          paddingBottom: (kb ? kb : bottom) + 12,
+          marginTop: top,
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, paddingBottom: 6 }}>
+          <T size={13} accent bold style={{ flex: 1 }} numberOfLines={1}>
+            ── {title} ──
+          </T>
+          <Pressable onPress={onClose} hitSlop={12}>
+            <T size={13} dim>
+              [esc]
+            </T>
+          </Pressable>
+        </View>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingHorizontal: 14, paddingTop: 6 }}
+        >
+          {children}
+        </ScrollView>
+      </View>
+    </View>
   );
 }
