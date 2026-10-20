@@ -1,0 +1,47 @@
+# Builds an installable release APK without Expo/EAS or Android Studio.
+# Run it from GitHub → Actions → "android-apk" → Run workflow, or push a tag like v0.1.1.
+# The APK is attached to the run as the "tstamp-apk" artifact.
+name: android-apk
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --no-install --clean
+
+      - name: Build release APK
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Rename APK
+        run: |
+          VERSION=$(node -p "require('./app.json').expo.version")
+          mv android/app/build/outputs/apk/release/app-release.apk "tstamp-v${VERSION}.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tstamp-apk
+          path: tstamp-v*.apk
+          retention-days: 30

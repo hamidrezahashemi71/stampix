@@ -140,7 +140,7 @@ export function ConfigScreen() {
 
       <H>about</H>
       <T dim size={12}>
-        tstamp v0.1.0 · session 1 build
+        tstamp v0.1.1
       </T>
 
       <CategorySheet id={editCat} onClose={() => setEditCat(null)} />

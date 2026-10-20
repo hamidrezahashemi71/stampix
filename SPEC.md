@@ -80,6 +80,12 @@ Primary action (STAMP) sits in the thumb zone above the status bar.
 - [ ] **S4 — device**: ongoing notification with STAMP action while a session runs (needs dev build),
       optional home-screen widget, app icon, EAS preview APK.
 
+## Build & release
+
+- `app.json` `expo.version` is the user-visible version; bump it for every APK.
+- APK via GitHub Actions (`.github/workflows/android-apk.yml`: prebuild + `assembleRelease`, debug-key signed)
+  or EAS (`eas.json` profile `preview` = APK). Keep one route: different routes use different signing keys.
+
 ## Testing
 
 - `npx tsc --noEmit` and `npx expo lint` must pass.

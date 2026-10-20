@@ -30,17 +30,39 @@ Scan the QR code with Expo Go. Code changes reload live on the phone.
 > In Iran, Play Store and expo.dev may need a VPN for installing Expo Go and for cloud builds.
 > The app itself is fully offline once installed.
 
-## Build a standalone APK (cloud, no Android Studio)
+## Build a standalone APK
+
+### Option A — GitHub Actions (no Expo account, no Android Studio)
+
+The workflow `.github/workflows/android-apk.yml` runs `expo prebuild` + Gradle on GitHub's runners
+and produces a release APK (signed with the debug key — fine for personal sideloading).
+
+```bash
+# once: create an empty private repo on github.com, then
+git remote add origin https://github.com/<you>/tstamp.git
+git push -u origin main
+```
+
+GitHub → repo → **Actions** → **android-apk** → **Run workflow**. After ~10 min open the run and
+download the **tstamp-apk** artifact (a zip containing `tstamp-v<version>.apk`).
+Pushing a tag (`git tag v0.1.2 && git push --tags`) also triggers a build.
+
+### Option B — EAS cloud build (needs a free Expo account; VPN may be needed in Iran)
 
 ```powershell
 npm i -g eas-cli
 eas login
-eas build:configure          # once; creates eas.json
 eas build -p android --profile preview
 ```
 
-Use a `preview` profile with `"android": { "buildType": "apk" }` in `eas.json`.
-EAS returns a link to the `.apk` — open it on the phone and install.
+`eas.json` already defines `preview` as an APK. EAS prints a link to the `.apk`.
+
+### Installing on the phone
+
+Open the `.apk` on the phone → allow "install unknown apps" for the browser/file manager → install.
+Data lives in the app's storage: uninstalling the app deletes it (export arrives in roadmap S3).
+Later builds install over the previous one and keep data, as long as they come from the same route
+(A and B use different signing keys — switching routes requires uninstalling first).
 
 ## Using it
 
