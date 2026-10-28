@@ -1,6 +1,6 @@
 # Builds an installable release APK without Expo/EAS or Android Studio.
 # Run it from GitHub → Actions → "android-apk" → Run workflow, or push a tag like v0.1.1.
-# The APK is attached to the run as the "tstamp-apk" artifact.
+# The APK is attached to the run as the "stampix-apk" artifact.
 name: android-apk
 
 on:
@@ -38,10 +38,10 @@ jobs:
       - name: Rename APK
         run: |
           VERSION=$(node -p "require('./app.json').expo.version")
-          mv android/app/build/outputs/apk/release/app-release.apk "tstamp-v${VERSION}.apk"
+          mv android/app/build/outputs/apk/release/app-release.apk "stampix-v${VERSION}.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: tstamp-apk
-          path: tstamp-v*.apk
+          name: stampix-apk
+          path: stampix-v*.apk
           retention-days: 30

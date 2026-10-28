@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useStore } from '../store';
 import { CategorySheet, TemplateSheet } from '../sheets';
 import { usePalette } from '../theme';
 import { dateStr } from '../time';
 import type { AccentKind, CalendarKind, ID } from '../types';
-import { Btn, Chip, H, Input, T, useNow } from '../ui';
+import { Btn, Chip, H, Input, T, useKeyboardHeight, useNow } from '../ui';
 
 const row = { flexDirection: 'row' as const, flexWrap: 'wrap' as const, alignItems: 'center' as const };
 
@@ -31,6 +31,15 @@ export function ConfigScreen() {
   const [editCat, setEditCat] = useState<ID | 'new' | null>(null);
   const [tplOpen, setTplOpen] = useState(false);
   const [shortcutsText, setShortcutsText] = useState(settings.shortcuts.join(', '));
+  const [shortcutsFocused, setShortcutsFocused] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const keyboardHeight = useKeyboardHeight();
+
+  useEffect(() => {
+    if (!shortcutsFocused || keyboardHeight === 0) return;
+    const frame = requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [keyboardHeight, shortcutsFocused]);
 
   const saveShortcuts = () => {
     const list = Array.from(
@@ -49,7 +58,11 @@ export function ConfigScreen() {
   const accents: AccentKind[] = ['green', 'blue'];
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      ref={scrollRef}
+      contentContainerStyle={{ padding: 14, paddingBottom: keyboardHeight + 40 }}
+      keyboardShouldPersistTaps="handled"
+    >
       <T dim size={12}>
         $ cat ~/.tstamprc
       </T>
@@ -121,7 +134,11 @@ export function ConfigScreen() {
       <Input
         value={shortcutsText}
         onChangeText={setShortcutsText}
-        onBlur={saveShortcuts}
+        onFocus={() => setShortcutsFocused(true)}
+        onBlur={() => {
+          setShortcutsFocused(false);
+          saveShortcuts();
+        }}
         onSubmitEditing={saveShortcuts}
         autoCapitalize="none"
         placeholder="traffic, rain, …"
