@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Category, ID, Session, Settings, Stamp } from './types';
-import { DEFAULT_QUICK_TAGS, SEED_TEMPLATE_KEYS, TEMPLATES } from './templates';
+import { DEFAULT_SHORTCUTS, SEED_TEMPLATE_KEYS, TEMPLATES } from './templates';
 import { mean, median } from './time';
 
 export const uid = (): ID => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -70,7 +70,7 @@ interface Data {
   activeSessionId: ID | null;
 }
 
-type StampPatch = Partial<Pick<Stamp, 'label' | 'note' | 'tags' | 'at'>>;
+type StampPatch = Partial<Pick<Stamp, 'label' | 'note' | 'at'>>;
 type MoveTarget = { sessionId: ID } | { newCategoryId: ID | null };
 
 interface Actions {
@@ -112,7 +112,7 @@ const initialData: Data = {
     accent: 'green',
     autoCloseHours: 4,
     showTimer: true,
-    quickTags: DEFAULT_QUICK_TAGS,
+    shortcuts: DEFAULT_SHORTCUTS,
   },
   activeSessionId: null,
 };
@@ -140,7 +140,7 @@ export const useStore = create<Store>()(
         const cat = s.categories.find((c) => c.id === sess.categoryId);
         const count = s.stamps.filter((x) => x.sessionId === sid).length;
         const now = Date.now();
-        const st: Stamp = { id: uid(), sessionId: sid, at: now, label: nextLabel(cat, count), note: '', tags: [] };
+        const st: Stamp = { id: uid(), sessionId: sid, at: now, label: nextLabel(cat, count), note: '' };
         const reachedEnd = !!cat && cat.checkpoints.length > 0 && count + 1 >= cat.checkpoints.length;
         const close = !!opts?.close || reachedEnd;
         set({
@@ -164,7 +164,7 @@ export const useStore = create<Store>()(
           createdAt: now,
           closedAt: singleShot ? now : null,
         };
-        const st: Stamp = { id: uid(), sessionId: sess.id, at: now, label: nextLabel(cat, 0), note: '', tags: [] };
+        const st: Stamp = { id: uid(), sessionId: sess.id, at: now, label: nextLabel(cat, 0), note: '' };
         set({ sessions: [...sessions, sess], stamps: [...s.stamps, st], activeSessionId: singleShot ? null : sess.id });
         return st;
       },
@@ -290,8 +290,29 @@ export const useStore = create<Store>()(
       }),
       // Keep defaults for settings keys added in later versions.
       merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<Data>;
-        return { ...current, ...p, settings: { ...current.settings, ...(p.settings ?? {}) } };
+        const p = (persisted ?? {}) as Partial<Data> & {
+          settings?: Partial<Settings> & { quickTags?: string[] };
+          stamps?: (Stamp & { tags?: string[] })[];
+        };
+        return {
+          ...current,
+          ...p,
+          stamps: (p.stamps ?? current.stamps).map(({ id, sessionId, at, label, note }) => ({
+            id,
+            sessionId,
+            at,
+            label,
+            note,
+          })),
+          settings: {
+            calendar: p.settings?.calendar ?? current.settings.calendar,
+            accent: p.settings?.accent ?? current.settings.accent,
+            autoCloseHours: p.settings?.autoCloseHours ?? current.settings.autoCloseHours,
+            showTimer: p.settings?.showTimer ?? current.settings.showTimer,
+            // Preserve the user's shortcut list from the previous persisted setting name.
+            shortcuts: p.settings?.shortcuts ?? p.settings?.quickTags ?? current.settings.shortcuts,
+          },
+        };
       },
     },
   ),

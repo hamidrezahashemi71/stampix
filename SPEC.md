@@ -18,8 +18,8 @@ Single user, offline, data on device. English-only UI, dark terminal aesthetic.
 |---|---|
 | `Category` | Kind of activity. `checkpoints: string[]` is the optional template; empty = free stamps. |
 | `Session` | One run of a category (or uncategorized). Open until closed. Duration = last stamp − first stamp. |
-| `Stamp` | `at` (epoch ms, UTC), `label`, `note`, `tags`. Belongs to one session. |
-| `Settings` | `calendar` (gregorian/jalali), `accent` (green/blue), `showTimer` (live elapsed counter on/off), `autoCloseHours`, `quickTags`. |
+| `Stamp` | `at` (epoch ms, UTC), `label`, `note`. Belongs to one session. |
+| `Settings` | `calendar` (gregorian/jalali), `accent` (green/blue), `showTimer` (live elapsed counter on/off), `autoCloseHours`, `shortcuts`. |
 
 Rules:
 
@@ -51,14 +51,14 @@ Rules:
 App.tsx                 shell: prompt line, tab content, status bar, stale-session check
 src/types.ts            domain types
 src/store.ts            zustand store, actions, pure helpers (stampsOf, nextLabel, categoryStats)
-src/templates.ts        built-in templates, seed categories, default quick tags
+src/templates.ts        built-in templates, seed categories, default shortcuts
 src/time.ts             clock / duration / date (gregorian + jalali) / median / mean
 src/theme.ts            palette (green|blue accent), alpha(), FONT names
 src/ui.tsx              T (text), Btn, Chip, Input, Sheet (keyboard-aware), Cursor, useNow
 src/sheets.tsx          StampSheet, SessionSheet, CategorySheet, TemplateSheet
 src/screens/LogScreen   active session panel, today summary, quick-start chips, STAMP button, undo toast
 src/screens/HistoryScreen   sessions grouped by day, category filter, expand, edit
-src/screens/ConfigScreen    calendar, accent, auto-close, categories, quick tags
+src/screens/ConfigScreen    calendar, accent, auto-close, categories, shortcuts
 ```
 
 ## UI language
@@ -70,9 +70,9 @@ Primary action (STAMP) sits in the thumb zone above the status bar.
 
 ## Roadmap
 
-- [x] **S1 — core**: data model, stamping, checkpoint flow, undo, stamp editor (label, ±time, tags, note),
+- [x] **S1 — core**: data model, stamping, checkpoint flow, undo, stamp editor (label, ±time, shortcuts, note),
       history with filter, session actions (category, reopen, delete), config (calendar, accent,
-      auto-close, categories, templates, quick tags).
+      auto-close, categories, templates, shortcuts).
 - [ ] **S2 — organize**: multi-select stamps in history → move to existing session / new session
       (`moveStamps` already in store). Merge sessions. Rename/reorder checkpoints with drag.
 - [ ] **S3 — stats + data**: STATS tab — per category median/mean/min/max, per-segment medians,

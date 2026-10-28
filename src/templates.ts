@@ -38,4 +38,4 @@ export const TEMPLATES: Template[] = [
 
 export const SEED_TEMPLATE_KEYS = ['commute', 'cooking', 'study'];
 
-export const DEFAULT_QUICK_TAGS = ['traffic', 'delay', 'rain', 'tired', 'focused', 'interrupted'];
+export const DEFAULT_SHORTCUTS = ['traffic', 'delay', 'rain', 'tired', 'focused', 'interrupted'];

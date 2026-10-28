@@ -126,10 +126,8 @@ export function HistoryScreen() {
                     {st.label}
                   </T>
                 </View>
-                {st.tags.length || st.note ? (
+                {st.note ? (
                   <T dim size={11} style={{ marginTop: 2, marginLeft: 16 }}>
-                    {st.tags.map((t) => `#${t}`).join(' ')}
-                    {st.tags.length && st.note ? ' · ' : ''}
                     {st.note}
                   </T>
                 ) : null}

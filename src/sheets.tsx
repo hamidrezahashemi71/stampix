@@ -11,7 +11,7 @@ const row = { flexDirection: 'row' as const, flexWrap: 'wrap' as const, alignIte
 
 // ───────────────────────── stamp editor ─────────────────────────
 
-/** Edit label / time / tags / note of a stamp. Closing the sheet saves. */
+/** Edit label / time / note of a stamp. Closing the sheet saves. */
 export function StampSheet(props: { id: ID | null; onClose: () => void }) {
   // `key` remounts the editor per stamp, so its local state starts fresh.
   return <StampEditor key={props.id ?? '-'} {...props} />;
@@ -19,18 +19,17 @@ export function StampSheet(props: { id: ID | null; onClose: () => void }) {
 
 function StampEditor({ id, onClose }: { id: ID | null; onClose: () => void }) {
   const st = useStore((s) => (id ? s.stamps.find((x) => x.id === id) : undefined));
-  const quickTags = useStore((s) => s.settings.quickTags);
+  const shortcuts = useStore((s) => s.settings.shortcuts);
   const cal = useStore((s) => s.settings.calendar);
   const updateStamp = useStore((s) => s.updateStamp);
   const deleteStamp = useStore((s) => s.deleteStamp);
 
   const [label, setLabel] = useState(st?.label ?? '');
   const [note, setNote] = useState(st?.note ?? '');
-  const [tags, setTags] = useState<string[]>(st?.tags ?? []);
   const [at, setAt] = useState(st?.at ?? 0);
 
   const save = () => {
-    if (st) updateStamp(st.id, { label: label.trim() || st.label, note: note.trim(), tags, at });
+    if (st) updateStamp(st.id, { label: label.trim() || st.label, note: note.trim(), at });
     onClose();
   };
 
@@ -47,7 +46,8 @@ function StampEditor({ id, onClose }: { id: ID | null; onClose: () => void }) {
       },
     ]);
 
-  const toggleTag = (t: string) => setTags((xs) => (xs.includes(t) ? xs.filter((x) => x !== t) : [...xs, t]));
+  const appendShortcut = (value: string) =>
+    setLabel((current) => `${current}${current && !/\s$/.test(current) ? ' ' : ''}${value}`);
   const shift = (min: number) => setAt((v) => v + min * 60_000);
 
   return (
@@ -80,11 +80,11 @@ function StampEditor({ id, onClose }: { id: ID | null; onClose: () => void }) {
           <Input value={label} onChangeText={setLabel} autoCapitalize="none" />
 
           <T dim size={12} style={{ marginTop: 12, marginBottom: 6 }}>
-            tags
+            shortcut
           </T>
           <View style={row}>
-            {quickTags.map((t) => (
-              <Chip key={t} label={`#${t}`} on={tags.includes(t)} onPress={() => toggleTag(t)} />
+            {shortcuts.map((shortcut) => (
+              <Chip key={shortcut} label={shortcut} on={false} onPress={() => appendShortcut(shortcut)} />
             ))}
           </View>
 

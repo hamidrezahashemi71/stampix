@@ -27,7 +27,6 @@ export interface Stamp {
   at: number;
   label: string;
   note: string;
-  tags: string[];
 }
 
 export interface Settings {
@@ -37,6 +36,6 @@ export interface Settings {
   autoCloseHours: number;
   /** Show the live elapsed-time counter for the active session. */
   showTimer: boolean;
-  /** One-tap tags offered in the stamp editor. */
-  quickTags: string[];
+  /** One-tap label shortcuts offered in the stamp editor. */
+  shortcuts: string[];
 }

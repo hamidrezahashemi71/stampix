@@ -73,7 +73,7 @@ Later builds install over the previous one and keep data, as long as they come f
 | Stamp and end the session | long-press **[ STAMP ]** |
 | Free stamp (no category) | tap **[ STAMP ]** while idle |
 | Undo last stamp | **UNDO** in the toast (5 s) |
-| Add note / tags / fix time | tap any stamp row |
+| Add note / use a label shortcut / fix time | tap any stamp row |
 | Change a session's category, reopen, delete | history → long-press the session |
 | Calendar (gregorian ↔ jalali), accent (green ↔ blue) | conf tab |
 | New category / from template | conf → categories |

@@ -143,17 +143,15 @@ export function LogScreen() {
                   <T size={13} style={{ flex: 1 }} numberOfLines={1}>
                     {st.label}
                   </T>
-                  {st.note || st.tags.length ? (
+                  {st.note ? (
                     <T dim size={12}>
                       {' '}
                       ✎
                     </T>
                   ) : null}
                 </View>
-                {st.tags.length || st.note ? (
+                {st.note ? (
                   <T dim size={11} numberOfLines={1} style={{ marginLeft: 16, marginTop: 2 }}>
-                    {st.tags.map((t) => `#${t}`).join(' ')}
-                    {st.tags.length && st.note ? ' · ' : ''}
                     {st.note}
                   </T>
                 ) : null}

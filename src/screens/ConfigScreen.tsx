@@ -30,18 +30,18 @@ export function ConfigScreen() {
 
   const [editCat, setEditCat] = useState<ID | 'new' | null>(null);
   const [tplOpen, setTplOpen] = useState(false);
-  const [tagsText, setTagsText] = useState(settings.quickTags.join(', '));
+  const [shortcutsText, setShortcutsText] = useState(settings.shortcuts.join(', '));
 
-  const saveTags = () => {
+  const saveShortcuts = () => {
     const list = Array.from(
       new Set(
-        tagsText
+        shortcutsText
           .split(/[,\n]/)
-          .map((x) => x.trim().replace(/^#/, '').toLowerCase())
+          .map((x) => x.trim())
           .filter(Boolean),
       ),
     );
-    setSettings({ quickTags: list });
+    setSettings({ shortcuts: list });
   };
 
   const today = useNow(60_000);
@@ -117,17 +117,17 @@ export function ConfigScreen() {
         <Btn small label="[ + template ]" onPress={() => setTplOpen(true)} />
       </View>
 
-      <H>quick tags</H>
+      <H>shortcuts</H>
       <Input
-        value={tagsText}
-        onChangeText={setTagsText}
-        onBlur={saveTags}
-        onSubmitEditing={saveTags}
+        value={shortcutsText}
+        onChangeText={setShortcutsText}
+        onBlur={saveShortcuts}
+        onSubmitEditing={saveShortcuts}
         autoCapitalize="none"
         placeholder="traffic, rain, …"
       />
       <T dim size={11} style={{ marginTop: 6 }}>
-        comma-separated · offered as one-tap tags when editing a stamp
+        comma-separated · append to the label when editing a stamp
       </T>
 
       <H>data</H>
